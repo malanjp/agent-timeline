@@ -52,3 +52,8 @@ claude plugin install agent-timeline --marketplace malanjp/agent-timeline
 claude plugin test .
 claude plugin validate .
 ```
+
+## ライセンス
+
+MIT License です。
+詳しくは [LICENSE](LICENSE) を見てください。

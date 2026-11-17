@@ -1,1 +1,1 @@
-{ "name": "agent-timeline", "version": "0.1.0", "description": "Shows this session's plan, timeline, last prompt and last recap in a pane", "types": "./types/index.d.ts" }
+{ "name": "agent-timeline", "version": "0.1.0", "description": "Shows this session's plan, timeline, last prompt and last recap in a pane", "types": "./types/index.d.ts", "license": "MIT" }
