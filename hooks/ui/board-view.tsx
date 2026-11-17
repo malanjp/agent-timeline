@@ -67,6 +67,11 @@ function Reports({ ui, reports }: { ui: ElementTable; reports: Report[] }) {
   )
 }
 
+function goalNote(b: Board): string | undefined {
+  if (b.goal === undefined) return undefined
+  return `${b.goal.isManual ? '手動' : '自動'} · ${hhmm(b.goal.at)}`
+}
+
 type Props = { ui: ElementTable; board: Board; place: string; toggleKey: string; onToggle: () => void }
 
 /** One session's board: plan, last prompt and recap, reports, history. */
@@ -83,6 +88,14 @@ export function BoardView({ ui, board, place, toggleKey, onToggle }: Props) {
 
   return (
     <Box flexDirection="column" gap={1} paddingX={1}>
+      <Section ui={ui} title="このセッションの目的" note={goalNote(board)}>
+        {board.goal === undefined ? (
+          <Text dimColor>指示が来ると自動でまとめます。/timeline goal で自分で書けます。</Text>
+        ) : (
+          <Text bold>{board.goal.text}</Text>
+        )}
+      </Section>
+
       <Section ui={ui} title="計画" note={total === 0 ? undefined : `${done}/${total}`}>
         {total === 0 && <Text dimColor>まだありません。</Text>}
         <PlanBar ui={ui} steps={board.steps} label="進捗" />

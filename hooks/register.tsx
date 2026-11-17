@@ -1,6 +1,7 @@
 import type { Register } from 'claude-code'
 
-import { answered, asText, ended, planned, prompted, started, titled, waiting, withPrs, wrapped } from './board'
+import { answered, asText, ended, isInstruction, planned, prompted, started, titled, waiting, withPrs, wrapped } from './board'
+import { setGoal, updateGoal } from './goal'
 import type { PlanArgs } from './plan'
 import { reportNow, runReports } from './reports'
 import {
@@ -38,7 +39,7 @@ export const register: Register = on => {
     await start($)
     const now = await $.clock.now()
     await change($, b => started(b, now))
-    await $.command.register({ name: 'timeline', description: 'タイムラインを開く (report で定期レポートを今すぐ作成)' })
+    await $.command.register({ name: 'timeline', description: 'タイムラインを開く (report: 定期レポートを今すぐ作成 / goal <文>: 目的を書く)' })
     void $.ui.open({ id: PANE, title: TITLE })
     await refresh($)
     $.clock.every(REFRESH_MS, () => void refresh($))
@@ -55,7 +56,9 @@ export const register: Register = on => {
   })
 
   on('command.run', { command: 'timeline' }, async ($, e) => {
-    if (e.args.trim() === 'report') return { text: await reportNow($) }
+    const [sub = '', ...rest] = e.args.trim().split(/\s+/)
+    if (sub === 'report') return { text: await reportNow($) }
+    if (sub === 'goal') return { text: await setGoal($, rest.join(' ')) }
     const { isPlaced } = await $.ui.open({ id: PANE, title: TITLE })
     if (isPlaced) return { text: 'タイムラインを開きました。' }
     return { text: asText(await readBoard($), await $.clock.now()) }
@@ -66,6 +69,7 @@ export const register: Register = on => {
     currentTurn = e.turnId
     const at = await $.clock.now()
     await change($, b => prompted(b, e.text, at))
+    if (isInstruction(e.text)) void updateGoal($)
     return next(e)
   })
 

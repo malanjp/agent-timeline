@@ -30,10 +30,15 @@ export function started(b: Board, at: number): Board {
   return b.startedAt === undefined ? { ...b, startedAt: at } : b
 }
 
-/** A turn starts. A notice the app sends (<task-notification>, ...) is not an instruction. */
+/** Whether a turn's text is the person's: a notice the app sends (<task-notification>, ...) is not. */
+export function isInstruction(text: string): boolean {
+  return text.trim() !== '' && !/^\s*<[a-z][\w-]*[\s>]/.test(text)
+}
+
+/** A turn starts. */
 export function prompted(b: Board, text: string, at: number): Board {
   const working = { ...b, isWorking: true, needsYou: false, lastAt: at }
-  if (/^\s*<[a-z][\w-]*[\s>]/.test(text) || text.trim() === '') return working
+  if (!isInstruction(text)) return working
   const prompt = clip(text, 200)
   return withEvents(
     { ...working, lastPrompt: { at, text: prompt }, title: b.title ?? clip(prompt, 40) },

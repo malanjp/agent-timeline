@@ -75,6 +75,11 @@ export function TimelinePane(props: Props) {
                     onPress={() => onOpen(card.id)}
                   />
                 </Box>
+                {card.board.goal !== undefined && (
+                  <Text dimColor wrap="truncate-end">
+                    目的: {plainLine(card.board.goal.text, 120)}
+                  </Text>
+                )}
                 <PlanBar ui={ui} steps={card.board.steps} label="計画" asCount />
                 {step !== undefined && (
                   <Text color="blue" wrap="truncate-end">

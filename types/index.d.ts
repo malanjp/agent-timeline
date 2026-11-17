@@ -50,6 +50,15 @@ export type Board = {
   /** Per level, the end of the last interval reported on. */
   reportedTo: number[]
   changes: PlanChange[]
+  /** What this session is for: summed up from the prompts, or written with /timeline goal. */
+  goal?: Goal
+}
+
+export type Goal = {
+  text: string
+  at: number
+  /** Written by the person: the prompts no longer rewrite it. */
+  isManual: boolean
 }
 
 /** One session's card as it writes it to the shared folder. */
